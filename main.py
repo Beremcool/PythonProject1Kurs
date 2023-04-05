@@ -12,7 +12,7 @@ CONSTANTS.StandardMap()
 mainMenu = pygame_menu.Menu('THE SNAKE GAME 2000', CONSTANTS.sizeX, CONSTANTS.sizeY,
                        theme=pygame_menu.themes.THEME_GREEN)
 
-mainMenu.add.text_input('Name :', onchange=CONSTANTS.nameChange)
+mainMenu.add.text_input('Name :', default = CONSTANTS.name, onchange=CONSTANTS.nameChange)
 mainMenu.add.selector('Difficulty :', [('Super Chill', 1),
                                    ('Easy', 2),
                                    ('Normal', 3),
