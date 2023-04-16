@@ -9,10 +9,21 @@ from PyGameVars import DISPLAY
 
 CONSTANTS.StandardMap()
 
+
+def StartGame():
+    mainGame = GameProcess.GameProcess()
+    mainGame.gameStart()
+
+
+def StartChangeMap():
+    mapChanger = ChangeMap.ChangeMapClass()
+    mapChanger.ChangeMap()
+
+
 mainMenu = pygame_menu.Menu('THE SNAKE GAME 2000', CONSTANTS.sizeX, CONSTANTS.sizeY,
                        theme=pygame_menu.themes.THEME_GREEN)
 
-mainMenu.add.text_input('Name :', default = CONSTANTS.name, onchange=CONSTANTS.nameChange)
+mainMenu.add.text_input('Name :', default=CONSTANTS.name, onchange=CONSTANTS.nameChange)
 mainMenu.add.selector('Difficulty :', [('Super Chill', 1),
                                    ('Easy', 2),
                                    ('Normal', 3),
@@ -24,8 +35,8 @@ mainMenu.add.selector('Snake color:', [('Green', 1),
                                     ('Violet', 3),
                                     ('Yellow', 4)],
                                     onchange=CONSTANTS.SnakeColorChange)
-mainMenu.add.button('Play', GameProcess.gameStart)
-mainMenu.add.button('Change Map', ChangeMap.ChangeMap)
+mainMenu.add.button('Play', StartGame)
+mainMenu.add.button('Change Map', StartChangeMap)
 mainMenu.add.button('Records', Records.showRecords)
 mainMenu.add.button('Tutorial', Tutorial.tutorial)
 mainMenu.add.button('Quit', pygame_menu.events.EXIT)

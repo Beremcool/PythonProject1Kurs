@@ -4,129 +4,109 @@ import Map
 import Inscriptions
 from PyGameVars import DISPLAY
 
-totalScore = 0
-headCoordinate = [CONSTANTS.xStart, CONSTANTS.yStart]
-Snake = []
-isSnakeDead = False
-oldDirect = 'w'
-direct = 'w'
 
-def SnakeInit():
-    global headCoordinate
-    global frame
-    global totalScore
-    global isSnakeDead
+class SnakeClass:
 
-    Snake.clear()
-    headCoordinate = [CONSTANTS.xStart, CONSTANTS.yStart]
-    Snake.append(headCoordinate)
-    frame = CONSTANTS.SnakeMoveDelay
-    totalScore = 0
-    isSnakeDead = False
+    def __init__(self):
+        self.headCoordinate = [CONSTANTS.xStart, CONSTANTS.yStart]
+        self.frame = CONSTANTS.SnakeMoveDelay
+        self.totalScore = 0
+        self.isSnakeDead = False
+        self.Snake = []
+        self.direct = 'w'
+        self.oldDirect = 'w'
+        self.Snake.append(self.headCoordinate)
 
+    def SnakeUpdate(self, mainMap):
 
-def SnakeUpdate():
-    global oldDirect
-    global frame
-    global direct
-
-    if frame != CONSTANTS.SnakeMoveDelay:
-        if not tuple(headCoordinate) in Map.appleSet:
-            Map.SnakeAnimation(frame, Map.getDirect(Snake[1], Snake[0]), Map.getColor(Snake[0][0], Snake[0][1]),
-                           Snake[0][0], Snake[0][1])
-        Map.SnakeAnimation(frame, oldDirect, CONSTANTS.SNAKE_COLOR, headCoordinate[0], headCoordinate[1])
-        if frame == CONSTANTS.SnakeMoveDelay - 1:
-            eatApple()
-            eatFastPlace()
-            eatStone()
-        frame += 1
-        totalClear()
-        Inscriptions.totalShow(totalScore)
-    else:
-        oldDirect = checkIsNewDirectCorrect()
-        changeHeadCoordinate()
-        Snake.append(tuple(headCoordinate))
-        frame = 1
+        if self.frame != CONSTANTS.SnakeMoveDelay:
+            if not tuple(self.headCoordinate) in mainMap.appleSet:
+                Map.MapClass.SnakeAnimation(self.frame, Map.MapClass.getDirect(self.Snake[1], self.Snake[0]),
+                                   Map.MapClass.getColor(self.Snake[0][0], self.Snake[0][1]),
+                                   self.Snake[0][0], self.Snake[0][1])
+            Map.MapClass.SnakeAnimation(self.frame, self.oldDirect, CONSTANTS.SNAKE_COLOR,
+                               self.headCoordinate[0], self.headCoordinate[1])
+            if self.frame == CONSTANTS.SnakeMoveDelay - 1:
+                self.eatApple(mainMap)
+                self.eatFastPlace(mainMap)
+                self.eatStone(mainMap)
+            self.frame += 1
+            self.totalClear()
+            Inscriptions.totalShow(self.totalScore)
+        else:
+            self.oldDirect = self.checkIsNewDirectCorrect()
+            self.changeHeadCoordinate()
+            self.Snake.append(tuple(self.headCoordinate))
+            self.frame = 1
 
 
-def changeHeadCoordinate():
-    global oldDirect
-    global isSnakeDead
+    def changeHeadCoordinate(self):
 
-    if oldDirect == 'a':
-        headCoordinate[0] -= 1
-    elif oldDirect == 'w':
-        headCoordinate[1] -= 1
-    elif oldDirect == 'd':
-        headCoordinate[0] += 1
-    elif oldDirect == 's':
-        headCoordinate[1] += 1
-    if Snake.count(tuple(headCoordinate)) > 0 and len(Snake) > 1:
-        isSnakeDead = True
+        if self.oldDirect == 'a':
+            self.headCoordinate[0] -= 1
+        elif self.oldDirect == 'w':
+            self.headCoordinate[1] -= 1
+        elif self.oldDirect == 'd':
+            self.headCoordinate[0] += 1
+        elif self.oldDirect == 's':
+            self.headCoordinate[1] += 1
+        if self.Snake.count(tuple(self.headCoordinate)) > 0 and len(self.Snake) > 1:
+            self.isSnakeDead = True
 
-def changeDirect(event):
-    global direct
+    def changeDirect(self, event):
 
-    if event.type == pygame.KEYDOWN:
-        if event.key == pygame.K_a or event.key == pygame.K_LEFT:
-            direct = 'a'
-        elif event.key == pygame.K_w or event.key == pygame.K_UP:
-            direct = 'w'
-        elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
-            direct = 'd'
-        elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
-            direct = 's'
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                self.direct = 'a'
+            elif event.key == pygame.K_w or event.key == pygame.K_UP:
+                self.direct = 'w'
+            elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                self.direct = 'd'
+            elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                self.direct = 's'
 
-def checkIsNewDirectCorrect():
-    global direct
-    global oldDirect
+    def checkIsNewDirectCorrect(self):
 
-    if len(Snake) == 1:
-        return direct
+        if len(self.Snake) == 1:
+            return self.direct
 
-    if oldDirect == 'w' and direct == 's':
-        return oldDirect
-    elif oldDirect == 's' and direct == 'w':
-        return oldDirect
-    elif oldDirect == 'a' and direct == 'd':
-        return oldDirect
-    elif oldDirect == 'd' and direct == 'a':
-        return oldDirect
-    return direct
+        if self.oldDirect == 'w' and self.direct == 's':
+            return self.oldDirect
+        elif self.oldDirect == 's' and self.direct == 'w':
+            return self.oldDirect
+        elif self.oldDirect == 'a' and self.direct == 'd':
+            return self.oldDirect
+        elif self.oldDirect == 'd' and self.direct == 'a':
+            return self.oldDirect
+        return self.direct
 
+    def eatApple(self, mainMap):
 
-def eatApple():
-    global totalScore
+        if tuple(self.headCoordinate) in mainMap.appleSet:
+            mainMap.appleSet.remove(tuple(self.headCoordinate))
+            self.totalScore += CONSTANTS.appleCost
+            CONSTANTS.gameSpeed += CONSTANTS.appleTimeHaste
+        else:
+            self.Snake.pop(0)
 
-    if tuple(headCoordinate) in Map.appleSet:
-        Map.appleSet.remove(tuple(headCoordinate))
-        totalScore += CONSTANTS.appleCost
-        CONSTANTS.gameSpeed += CONSTANTS.appleTimeHaste
-    else:
-        Snake.pop(0)
+    def eatFastPlace(self, mainMap):
 
+        if mainMap.fastPlace.count(tuple(self.headCoordinate)) > 0:
+            mainMap.fastPlace.remove(tuple(self.headCoordinate))
+            CONSTANTS.gameSpeed += CONSTANTS.fastPlaceTimeHaste
 
-def eatFastPlace():
-    if Map.fastPlace.count(tuple(headCoordinate)) > 0:
-        Map.fastPlace.remove(tuple(headCoordinate))
-        CONSTANTS.gameSpeed += CONSTANTS.fastPlaceTimeHaste
+    def eatStone(self, mainMap):
 
+        if mainMap.stonePlace.count(tuple(self.headCoordinate)) > 0:
+            self.isSnakeDead = True
 
-def eatStone():
-    global isSnakeDead
+    def checkDeath(self):
+        return (self.headCoordinate[0] == -1 or self.headCoordinate[0] == CONSTANTS.xCount or
+                self.headCoordinate[1] == -1 or self.headCoordinate[1] == CONSTANTS.yCount or
+                self.isSnakeDead)
 
-    if Map.stonePlace.count(tuple(headCoordinate)) > 0:
-        isSnakeDead = True
+    @staticmethod
+    def totalClear():
+        pygame.draw.rect(DISPLAY, CONSTANTS.FRAME_COLOR,
+                         (0, 0, CONSTANTS.xScoreClear, CONSTANTS.yScoreClear))
 
-
-def checkDeath():
-    global isSnakeDead
-
-    return (headCoordinate[0] == -1 or headCoordinate[0] == CONSTANTS.xCount or
-            headCoordinate[1] == -1 or headCoordinate[1] == CONSTANTS.yCount or
-            isSnakeDead)
-
-
-def totalClear():
-    pygame.draw.rect(DISPLAY, CONSTANTS.FRAME_COLOR,
-                     (0, 0, CONSTANTS.xScoreClear, CONSTANTS.yScoreClear))
